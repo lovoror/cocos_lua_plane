@@ -9,6 +9,7 @@ cc.FileUtils:getInstance():addSearchPath("res/Music")
 cc.SpriteFrameCache:getInstance():addSpriteFrames("bullet.plist")
 cc.SpriteFrameCache:getInstance():addSpriteFrames("Enemy.plist")
 cc.SpriteFrameCache:getInstance():addSpriteFrames("explosion.plist")
+cc.SpriteFrameCache:getInstance():addSpriteFrames("Missile.plist")
 
 
 -- Require
@@ -31,4 +32,5 @@ require("src/OptionsScene")
 require("src/PauseLayer")
 require("src/PlaneSprite")
 require("src/PhysicsTest")
-
+require("src/Missile")
+require("src/MissileAndFire")

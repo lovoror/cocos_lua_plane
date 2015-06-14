@@ -14,14 +14,17 @@ GameLayer.sliderLife = nil              -- 生命条
 GameLayer.ship = nil                    -- 飞机
 GameLayer.enemyManager = nil            -- 敌机管理
 
-
+GameLayer.test = 1
 function GameLayer:ctor()
-
+    GameLayer.test = 3
+    self.runflag = false
 end
 
 
 function GameLayer:create()
+    print ('test = '..GameLayer.test)
     local layer = GameLayer.new()
+    print ('test end = '..GameLayer.test)
     layer:init()
     return layer
 end
@@ -139,7 +142,9 @@ function GameLayer:addTouch()
 
     -- 触屏结束
     local function onTouchEnded(touch, event)
-        -- print("touchEnded")
+        print("touchEnded")
+        local missile = MissileAndFire:create(self)
+        missile:fire()
     end
 
     -- 注册单点触摸
@@ -189,15 +194,13 @@ end
 -- 初始化主机
 function GameLayer:initShip()
     self.ship = PlaneSprite:create()
-    self:addChild(self.ship, 0, 1001)
+    self:addChild(self.ship, 10, 1001)
 end
 
 
 -- 初始化敌机
 function GameLayer:initEnemy()
     self.enemyManager = EnemyManager:create(self)
-    -- -------------------------------------
-    -- 不加入层中，好像就调用不了enemyManager的方法
     self:addChild(self.enemyManager)
 end
 
@@ -207,6 +210,11 @@ function GameLayer:updateTime()
     if self.gameState == self.stateGamePlaying then
         self.gameTime = self.gameTime + 1
         self.enemyManager:updateEnemy(self.gameTime)
+        if self.gameTime % 4 == 1 then
+            print ("加导弹")
+            local missile = MissileAndFire:create(self)
+            missile:fire()
+        end
     end
 end
 
@@ -297,7 +305,7 @@ function GameLayer:checkIsReborn()
     if Global:getInstance():getLifeCount() >= 0 then
         if self.ship == nil then
             self.ship = PlaneSprite:create()
-            self:addChild(self.ship, 0, 1001)
+            self:addChild(self.ship, 10, 1001)
         end
     else
         self.gameState = self.stateGameOver
@@ -365,6 +373,17 @@ function GameLayer:addContact()
         local a = contact:getShapeA():getBody():getNode()
         local b = contact:getShapeB():getBody():getNode()
         if a ~= nil and b ~= nil then
+            if a:getTag() == MISSILE_TAG and b:getTag() == 1002 then
+                a:destory()
+                b:destroy()
+                return true
+            elseif a:getTag() == 1002 and b:getTag() == MISSILE_TAG then
+                a:destroy()
+                b:destroy()
+                return true
+            end
+
+
             a:hurt(1)
             b:hurt(1)
         end
